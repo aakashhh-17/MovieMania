@@ -1,5 +1,5 @@
 import express from 'express'
-import { protectAdmin } from '../middleware/auth';
+import { protectAdmin } from '../middleware/auth.js';
 import { createBooking, getOccupiedSeats } from '../controllers/bookingController.js';
 
 const router = express.Router();
