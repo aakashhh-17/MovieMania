@@ -15,7 +15,12 @@ export const getNowPlayingMovies = async (req, res) => {
     const movies = data.results;
     res.json({ success: true, movies: movies });
   } catch (error) {
-    console.log("error in getNowPlayingMovies: ", error);
+    console.log("error in getNowPlayingMovies: ", {
+      message: error.message,
+  code: error.code,
+  response: error.response?.status,
+  data: error.response?.data
+    });
     res.json({ success: false, message: error.message });
   }
 };
@@ -41,6 +46,8 @@ export const addShow = async (req, res) => {
       const movieApiData = movieDetailsResponse.data;
       const movieCreditsData = movieCreditsResponse.data;
 
+      // console.log(movieCreditsResponse.data);
+      
       const movieDetails = {
         _id: movieId,
         title: movieApiData.title,
@@ -48,7 +55,7 @@ export const addShow = async (req, res) => {
         poster_path: movieApiData.poster_path,
         backdrop_path: movieApiData.backdrop_path,
         genres: movieApiData.genres,
-        casts: movieApiData.cast,
+        casts: movieCreditsData.cast,
         release_date: movieApiData.release_date,
         original_language: movieApiData.original_language,
         tagline: movieApiData.tagline || "",
@@ -108,12 +115,13 @@ export const getShow = async (req, res)=>{
 
         // Get all upcoming shows for that movie
         const shows = await Show.find({movie: movieId, showDateTime: {$gte: new Date()}});
-
+        // console.log(shows);
+        
         const movie = await Movie.findById(movieId);
         const dateTime = {};
 
         shows.forEach((show)=>{
-            const date = show.showDateTime.toISOString.split("T")[0];
+            const date = show.showDateTime.toISOString().split("T")[0];
             if(!dateTime[date]){
                 dateTime[date] = [];
             }

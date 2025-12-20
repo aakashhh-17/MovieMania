@@ -25,7 +25,7 @@ export const getUserBookings = async (req, res)=>{
 export const updateFavourite = async (req, res)=>{
     try {
         const {movieId} = req.body;
-        const userId = req.auth.userId();
+        const userId = req.auth.userId;
 
         const user = await clerkClient.users.getUser(userId)
 
